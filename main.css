@@ -1,0 +1,10 @@
+.header {
+  height: 50px;
+  width: 200px;
+  background: rgba(0, 128, 0, 0.185);
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+}

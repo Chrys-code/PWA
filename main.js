@@ -1,5 +1,6 @@
 async function validatieInput(artist){
     const response = await fetch(`https://hikar.org/course/imm/songs.php?artist=${artist}`)
+    console.log(response)
     const artists = await response.json();
     let html = ""
     artists.forEach(artist => { 

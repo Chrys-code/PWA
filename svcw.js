@@ -34,10 +34,13 @@ function createDB() {
 
 
 function searchDB(ev) {
+
     const parts = ev.request.url.split("?");
       const artist = parts[1].replace("artist=","");
 
       return new Promise((resolve, reject) => {
+        const transaction = self.db.transaction('music');
+        const objectStore = transaction.objectStore('music');
         const request = objectStore.get(artist);
 
         request.onsuccess = function (e) {
@@ -50,6 +53,35 @@ function searchDB(ev) {
 
     });
 
+}
+
+
+///////////////////////
+// New and working
+///////////////////////
+function dbadd(jsondata) {
+    // Assume we are responding to a button click
+    console.log(jsondata)
+
+    jsondata.forEach(data => {
+        let title = data.title;
+        let artist = data.artist;
+        let year = data.year;
+
+        const transaction = db.transaction("music", "readwrite");
+        const objectStore = transaction.objectStore("music");
+        const newObj = {keyPath: "artist", title: title, artist: artist, year: year};
+        console.log(newObj)
+        const request = objectStore.add(newObj);
+        request.onsuccess =  e => {
+           console.log('Successfully added.');
+        };
+        request.onerror = e => {
+            console.log(`ERROR ${e.target.errorCode}`);
+        }
+    
+    })
+    
 }
 
 
@@ -92,10 +124,10 @@ self.addEventListener('fetch', ev => {
                     return fetch(ev.request)
                     .then(resp2 => {
                         return resp2.json().then(jsondata => {
-                            return dbadd(artist, jsondata)
-                            .then (()=> {
+                            return dbadd(jsondata)
+                            .then ((jsondata)=> {
                                 const str = JSON.stringify(jsondata);
-                                return new Response(str, {headers:
+                                return new Response(str,{headers:
                                 {"Content-Type": "application/json"},
                                 })
                             })
